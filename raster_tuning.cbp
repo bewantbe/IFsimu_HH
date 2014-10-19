@@ -301,6 +301,7 @@
 			<Option target="Release Linux + MKL" />
 		</Unit>
 		<Unit filename="stdafx.h">
+			<Option compile="1" />
 			<Option weight="1" />
 			<Option target="Debug Linux" />
 			<Option target="Release Linux" />

@@ -921,11 +921,11 @@
 	"datahandling.h"
 	"poisson_input.h"
 
-1407355056 source:/home/xyy/code/IFsimu_hg/datahandling.cpp
+1413749221 source:/home/xyy/code/IFsimu_hg/datahandling.cpp
 	"stdafx.h"
 	"datahandling.h"
 
-1407355056 /home/xyy/code/IFsimu_hg/stdafx.h
+1413749950 /home/xyy/code/IFsimu_hg/stdafx.h
 	<stdio.h>
 	<stdlib.h>
 	<limits.h>
@@ -939,16 +939,17 @@
 	"raster.h"
 	"neuron.h"
 	"loop.h"
+	<Eigen/Sparse>
 
-1407355056 /home/xyy/code/IFsimu_hg/raster.h
+1413749221 /home/xyy/code/IFsimu_hg/raster.h
 
-1407355056 /home/xyy/code/IFsimu_hg/neuron.h
+1413749221 /home/xyy/code/IFsimu_hg/neuron.h
 
-1407355056 /home/xyy/code/IFsimu_hg/loop.h
+1413749221 /home/xyy/code/IFsimu_hg/loop.h
 
-1407355056 /home/xyy/code/IFsimu_hg/datahandling.h
+1413749221 /home/xyy/code/IFsimu_hg/datahandling.h
 
-1407355056 source:/home/xyy/code/IFsimu_hg/datainput.cpp
+1413750579 source:/home/xyy/code/IFsimu_hg/datainput.cpp
 	"stdafx.h"
 	"random.h"
 	"datainput.h"
@@ -960,13 +961,13 @@
 
 1337694751 /home/xyy/code/IFsimu_hg/random.h
 
-1407355056 /home/xyy/code/IFsimu_hg/datainput.h
+1413749221 /home/xyy/code/IFsimu_hg/datainput.h
 
 1360675345 source:/home/xyy/code/IFsimu_hg/loop.cpp
 	"stdafx.h"
 	"loop.h"
 
-1407355056 source:/home/xyy/code/IFsimu_hg/myopengl.cpp
+1413749221 source:/home/xyy/code/IFsimu_hg/myopengl.cpp
 	"stdafx.h"
 	"myopengl.h"
 	"datainput.h"
@@ -978,13 +979,13 @@
 
 1337694751 /home/xyy/code/IFsimu_hg/myopengl.h
 
-1407355056 /home/xyy/code/IFsimu_hg/poisson_input.h
+1413749221 /home/xyy/code/IFsimu_hg/poisson_input.h
 
-1407355056 source:/home/xyy/code/IFsimu_hg/neuron.cpp
+1413749221 source:/home/xyy/code/IFsimu_hg/neuron.cpp
 	"stdafx.h"
 	"neuron.h"
 
-1407388186 source:/home/xyy/code/IFsimu_hg/poisson_input.cpp
+1413753187 source:/home/xyy/code/IFsimu_hg/poisson_input.cpp
 	"stdafx.h"
 	"loop.h"
 	"neuron.h"
@@ -992,6 +993,7 @@
 	"datainput.h"
 	"datahandling.h"
 	"poisson_input.h"
+	<Eigen/Dense>
 
 1337694739 source:/home/xyy/code/IFsimu_hg/random.cpp
 	"stdafx.h"
@@ -1001,7 +1003,7 @@
 	"stdafx.h"
 	"raster.h"
 
-1407355056 source:/home/xyy/code/IFsimu_hg/raster_tuning.cpp
+1413750645 source:/home/xyy/code/IFsimu_hg/raster_tuning.cpp
 	"stdafx.h"
 	<sys/types.h>
 	<sys/stat.h>
@@ -1927,4 +1929,233 @@
 
 1393428918 /usr/include/eigen3/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h
 	"./RealQZ.h"
+
+1393428918 /usr/include/eigen3/Eigen/Sparse
+	"SparseCore"
+	"OrderingMethods"
+	"SparseCholesky"
+	"SparseLU"
+	"SparseQR"
+	"IterativeLinearSolvers"
+
+1393428918 /usr/include/eigen3/Eigen/SparseCore
+	"Core"
+	"src/Core/util/DisableStupidWarnings.h"
+	<vector>
+	<map>
+	<cstdlib>
+	<cstring>
+	<algorithm>
+	"src/SparseCore/SparseUtil.h"
+	"src/SparseCore/SparseMatrixBase.h"
+	"src/SparseCore/CompressedStorage.h"
+	"src/SparseCore/AmbiVector.h"
+	"src/SparseCore/SparseMatrix.h"
+	"src/SparseCore/MappedSparseMatrix.h"
+	"src/SparseCore/SparseVector.h"
+	"src/SparseCore/SparseBlock.h"
+	"src/SparseCore/SparseTranspose.h"
+	"src/SparseCore/SparseCwiseUnaryOp.h"
+	"src/SparseCore/SparseCwiseBinaryOp.h"
+	"src/SparseCore/SparseDot.h"
+	"src/SparseCore/SparsePermutation.h"
+	"src/SparseCore/SparseRedux.h"
+	"src/SparseCore/SparseFuzzy.h"
+	"src/SparseCore/ConservativeSparseSparseProduct.h"
+	"src/SparseCore/SparseSparseProductWithPruning.h"
+	"src/SparseCore/SparseProduct.h"
+	"src/SparseCore/SparseDenseProduct.h"
+	"src/SparseCore/SparseDiagonalProduct.h"
+	"src/SparseCore/SparseTriangularView.h"
+	"src/SparseCore/SparseSelfAdjointView.h"
+	"src/SparseCore/TriangularSolver.h"
+	"src/SparseCore/SparseView.h"
+	"src/Core/util/ReenableStupidWarnings.h"
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseUtil.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseMatrixBase.h
+	"../plugins/CommonCwiseUnaryOps.h"
+	"../plugins/CommonCwiseBinaryOps.h"
+	"../plugins/MatrixCwiseUnaryOps.h"
+	"../plugins/MatrixCwiseBinaryOps.h"
+	"../plugins/BlockMethods.h"
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/CompressedStorage.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/AmbiVector.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseMatrix.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/MappedSparseMatrix.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseVector.h
+
+1340472561 /usr/include/eigen3/Eigen/src/SparseCore/CoreIterators.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseBlock.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseTranspose.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseCwiseUnaryOp.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseCwiseBinaryOp.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseDot.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparsePermutation.h
+
+1340472561 /usr/include/eigen3/Eigen/src/SparseCore/SparseAssign.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseRedux.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseFuzzy.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/ConservativeSparseSparseProduct.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseSparseProductWithPruning.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseProduct.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseDenseProduct.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseDiagonalProduct.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseTriangularView.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseSelfAdjointView.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/TriangularSolver.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseView.h
+
+1393428918 /usr/include/eigen3/Eigen/OrderingMethods
+	"SparseCore"
+	"src/Core/util/DisableStupidWarnings.h"
+	"src/OrderingMethods/Amd.h"
+	"src/OrderingMethods/Ordering.h"
+	"src/Core/util/ReenableStupidWarnings.h"
+
+1393428918 /usr/include/eigen3/Eigen/src/OrderingMethods/Amd.h
+	"../Core/util/NonMPL2.h"
+
+1393428918 /usr/include/eigen3/Eigen/SparseCholesky
+	"SparseCore"
+	"OrderingMethods"
+	"src/Core/util/DisableStupidWarnings.h"
+	"src/misc/Solve.h"
+	"src/misc/SparseSolve.h"
+	"src/SparseCholesky/SimplicialCholesky.h"
+	"src/SparseCholesky/SimplicialCholesky_impl.h"
+	"src/Core/util/ReenableStupidWarnings.h"
+
+1393428918 /usr/include/eigen3/Eigen/src/misc/SparseSolve.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCholesky/SimplicialCholesky.h
+
+1393428918 /usr/include/eigen3/Eigen/IterativeLinearSolvers
+	"SparseCore"
+	"OrderingMethods"
+	"src/Core/util/DisableStupidWarnings.h"
+	"src/misc/Solve.h"
+	"src/misc/SparseSolve.h"
+	"src/IterativeLinearSolvers/IterativeSolverBase.h"
+	"src/IterativeLinearSolvers/BasicPreconditioners.h"
+	"src/IterativeLinearSolvers/ConjugateGradient.h"
+	"src/IterativeLinearSolvers/BiCGSTAB.h"
+	"src/IterativeLinearSolvers/IncompleteLUT.h"
+	"src/Core/util/ReenableStupidWarnings.h"
+
+1393428918 /usr/include/eigen3/Eigen/src/IterativeLinearSolvers/IterativeSolverBase.h
+
+1393428918 /usr/include/eigen3/Eigen/src/IterativeLinearSolvers/BasicPreconditioners.h
+
+1393428918 /usr/include/eigen3/Eigen/src/IterativeLinearSolvers/ConjugateGradient.h
+
+1393428918 /usr/include/eigen3/Eigen/src/IterativeLinearSolvers/BiCGSTAB.h
+
+1393428918 /usr/include/eigen3/Eigen/src/IterativeLinearSolvers/IncompleteLUT.h
+
+1393428918 /usr/include/eigen3/Eigen/src/Core/util/NonMPL2.h
+
+1393428918 /usr/include/eigen3/Eigen/src/OrderingMethods/Ordering.h
+	"Eigen_Colamd.h"
+
+1393428918 /usr/include/eigen3/Eigen/src/OrderingMethods/Eigen_Colamd.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCholesky/SimplicialCholesky_impl.h
+	"../Core/util/NonMPL2.h"
+
+1393428918 /usr/include/eigen3/Eigen/SparseLU
+	"SparseCore"
+	"src/misc/Solve.h"
+	"src/misc/SparseSolve.h"
+	"OrderingMethods"
+	"src/SparseLU/SparseLU_gemm_kernel.h"
+	"src/SparseLU/SparseLU_Structs.h"
+	"src/SparseLU/SparseLU_SupernodalMatrix.h"
+	"src/SparseLU/SparseLUImpl.h"
+	"src/SparseCore/SparseColEtree.h"
+	"src/SparseLU/SparseLU_Memory.h"
+	"src/SparseLU/SparseLU_heap_relax_snode.h"
+	"src/SparseLU/SparseLU_relax_snode.h"
+	"src/SparseLU/SparseLU_pivotL.h"
+	"src/SparseLU/SparseLU_panel_dfs.h"
+	"src/SparseLU/SparseLU_kernel_bmod.h"
+	"src/SparseLU/SparseLU_panel_bmod.h"
+	"src/SparseLU/SparseLU_column_dfs.h"
+	"src/SparseLU/SparseLU_column_bmod.h"
+	"src/SparseLU/SparseLU_copy_to_ucol.h"
+	"src/SparseLU/SparseLU_pruneL.h"
+	"src/SparseLU/SparseLU_Utils.h"
+	"src/SparseLU/SparseLU.h"
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_gemm_kernel.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_Structs.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_SupernodalMatrix.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseLU/SparseLUImpl.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseCore/SparseColEtree.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_Memory.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_heap_relax_snode.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_relax_snode.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_pivotL.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_panel_dfs.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_kernel_bmod.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_panel_bmod.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_column_dfs.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_column_bmod.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_copy_to_ucol.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_pruneL.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseLU/SparseLU_Utils.h
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseLU/SparseLU.h
+
+1393428918 /usr/include/eigen3/Eigen/SparseQR
+	"SparseCore"
+	"OrderingMethods"
+	"src/Core/util/DisableStupidWarnings.h"
+	"src/misc/Solve.h"
+	"src/misc/SparseSolve.h"
+	"OrderingMethods"
+	"src/SparseCore/SparseColEtree.h"
+	"src/SparseQR/SparseQR.h"
+	"src/Core/util/ReenableStupidWarnings.h"
+
+1393428918 /usr/include/eigen3/Eigen/src/SparseQR/SparseQR.h
 

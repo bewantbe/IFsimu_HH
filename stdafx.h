@@ -278,6 +278,9 @@ extern double *phase;
 #if CORTICAL_STRENGTH_NONHOMO
 // this matrix saves the cortical strength between neurons in the network
 extern double** cortical_matrix;
+#include <Eigen/Sparse>
+typedef Eigen::SparseMatrix<double> SpMat;
+extern SpMat cortical_matrix_sp; // sparse representation of cortical_matrix
 #endif
 
 // the strength of excitatory neuron to excitatory neuron

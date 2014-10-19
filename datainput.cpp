@@ -424,6 +424,7 @@ int setglobals()
     cortical_matrix[i] = (double*)calloc(g_num_neu, sizeof(double));
     CHK_MEM_RET(cortical_matrix[i]);
   }
+  cortical_matrix_sp.resize(g_num_neu, g_num_neu);
 #endif
   vol          = (double *)malloc(sizeof(double)*g_num_neu);
   CHK_MEM_RET(vol);

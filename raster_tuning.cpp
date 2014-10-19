@@ -59,6 +59,7 @@ long initial_pertub_In_K = -2248;
 #endif
 #if CORTICAL_STRENGTH_NONHOMO
 double** cortical_matrix = NULL;
+SpMat cortical_matrix_sp;
 #endif
 
 struct neuron *neu = NULL;
@@ -710,6 +711,17 @@ int main(int argc, char *argv[])
     printf("Warning: the file name of cortical matrix is \"%s\"\n", cor_mat_file);
     printf("         which means it's a complete graph connection.\n");
   }
+  typedef Eigen::Triplet<double> Tp;  // row index, column index, value
+  std::vector<Tp> coefficients;
+  for (int i=0; i<g_num_neu; i++) {
+    for (int j=0; j<g_num_neu; j++) {
+      if (cortical_matrix[i][j] != 0) {
+        coefficients.push_back(Tp(i, j, cortical_matrix[i][j]));
+      }
+    }
+  }
+  cortical_matrix_sp.setFromTriplets(coefficients.begin(), coefficients.end());
+  cortical_matrix_sp.makeCompressed();
 #endif
 
 #if POISSON_INPUT_USE

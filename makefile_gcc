@@ -1,7 +1,7 @@
 # Project: cleanIFcode
 # make -f makefile_gcc
 
-CPP  = g++ -O2 -march=native
+CPP  = g++ -O3 -march=native
 OBJ  = datahandling.o datainput.o loop.o myopengl.o neuron.o poisson_input.o random.o raster.o raster_tuning.o
 LINKOBJ = datahandling.o datainput.o loop.o myopengl.o neuron.o poisson_input.o random.o raster.o raster_tuning.o
 LIBS    = -lGL -lGLU -lglut -s

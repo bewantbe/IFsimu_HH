@@ -289,24 +289,46 @@ void get_dx(Eigen::ArrayXXd &dx, const Eigen::ArrayXXd &xm, double t)
   // cost 7%
   // Compute influence from the network (H^E and H^I)
   double synaptic_volt;
+//  for (int i = 0; i < g_num_neu_ex; i++) {
+//    synaptic_volt = xm(i,0)>4 ? 1/(1+exp(-5*(xm(i,0) - 8.5))) : 0.0;
+//    if(synaptic_volt == 0) continue;
+//    for (int j = 0; j < g_num_neu_ex; j++) {
+//      dx(j, 2) += Strength_CorEE * cortical_matrix[j][i] * synaptic_volt;
+//    }
+//    for (int j = g_num_neu_ex; j < g_num_neu; j++) {
+//      dx(j, 2) += Strength_CorIE * cortical_matrix[j][i] * synaptic_volt;
+//    }
+//  }
+//  for (int i = g_num_neu_ex; i < g_num_neu; i++) {
+//    synaptic_volt = xm(i,0)>4 ? 1/(1+exp(-5*(xm(i,0) - 8.5))) : 0.0;
+//    if(synaptic_volt == 0) continue;
+//    for (int j = 0; j < g_num_neu_ex; j++) {
+//      dx(j, 4) += Strength_CorEI * cortical_matrix[j][i] * synaptic_volt;
+//    }
+//    for (int j = g_num_neu_ex; j < g_num_neu; j++) {
+//      dx(j, 4) += Strength_CorII * cortical_matrix[j][i] * synaptic_volt;
+//    }
+//  }
   for (int i = 0; i < g_num_neu_ex; i++) {
     synaptic_volt = xm(i,0)>4 ? 1/(1+exp(-5*(xm(i,0) - 8.5))) : 0.0;
     if(synaptic_volt == 0) continue;
-    for (int j = 0; j < g_num_neu_ex; j++) {
-      dx(j, 2) += Strength_CorEE * cortical_matrix[j][i] * synaptic_volt;
-    }
-    for (int j = g_num_neu_ex; j < g_num_neu; j++) {
-      dx(j, 2) += Strength_CorIE * cortical_matrix[j][i] * synaptic_volt;
+    for (SpMat::InnerIterator it(cortical_matrix_sp, i); it; ++it) {
+      if (it.row() < g_num_neu_ex) {
+        dx(it.row(), 2) += Strength_CorEE * it.value() * synaptic_volt;
+      } else {
+        dx(it.row(), 2) += Strength_CorIE * it.value() * synaptic_volt;
+      }
     }
   }
   for (int i = g_num_neu_ex; i < g_num_neu; i++) {
     synaptic_volt = xm(i,0)>4 ? 1/(1+exp(-5*(xm(i,0) - 8.5))) : 0.0;
     if(synaptic_volt == 0) continue;
-    for (int j = 0; j < g_num_neu_ex; j++) {
-      dx(j, 4) += Strength_CorEI * cortical_matrix[j][i] * synaptic_volt;
-    }
-    for (int j = g_num_neu_ex; j < g_num_neu; j++) {
-      dx(j, 4) += Strength_CorII * cortical_matrix[j][i] * synaptic_volt;
+    for (SpMat::InnerIterator it(cortical_matrix_sp, i); it; ++it) {
+      if (it.row() < g_num_neu_ex) {
+        dx(it.row(), 4) += Strength_CorEI * it.value() * synaptic_volt;
+      } else {
+        dx(it.row(), 4) += Strength_CorII * it.value() * synaptic_volt;
+      }
     }
   }
 }
