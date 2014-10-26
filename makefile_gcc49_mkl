@@ -1,0 +1,116 @@
+# Project: raster_tuning
+
+# compile with gcc -O3 -march=native
+#$ make -f makefile_gcc49_mkl clean release
+
+# compile with gcc -O3
+#$ make -f makefile_gcc49_mkl clean release-O3
+
+# compile with gcc -O3 -march=native with MKL
+#$ make -f makefile_gcc49_mkl clean release-mkl
+
+# compile with gcc -O3 with MKL
+#$ make -f makefile_gcc49_mkl clean release-mkl CXXFLAGS=-O3
+
+# test
+#$ make -f makefile_gcc49_mkl test100
+#$ make -f makefile_gcc49_mkl test1000
+
+# profile
+#$ LDFLAGS='-g -pg' make -f makefile_gcc49_mkl clean release CXXFLAGS="-g -pg -O3 -march=native"
+#$ make -f makefile_gcc49_mkl test1000
+#$ gprof bin/raster_tuning_HH3_gcc49 gmon.out > g.txt
+
+# shared link gcc 4.9 lib (so no need to install gcc4.9 on target)
+#$ make -f makefile_gcc49_mkl shared=1
+
+CXX = $(HOME)/gcc4.9.1/bin/g++
+CXXFLAGS = -O3 -march=native
+CPPFLAGS = -I"./eigen3" -ansi -Wall -Wno-unused-local-typedefs -fdiagnostics-color=auto
+OBJ     = datahandling.o datainput.o loop.o myopengl.o neuron.o \
+          poisson_input.o random.o raster.o raster_tuning.o
+BIN     = bin/raster_tuning_HH3_gcc49
+
+# used to generate reference answer
+REF_BIN = $(HOME)/matcode/prj_GC_clean/HH/raster_tuning_HH3_gcc
+
+ifeq ($(strip $(shared)),)
+LIBS = -lglut -lGLU -lGL -static-libgcc -static-libstdc++
+else
+LIBS = -lglut -lGLU -lGL -Wl,-rpath -Wl,$(HOME)/gcc4.9.1/lib64
+endif
+
+.PHONY : release release-O3 release-mkl san debug clean test100 ans100 test1000
+
+#
+# Release: gcc -O3 -march=native
+#
+release: LDFLAGS ?= -s
+release: $(BIN)
+
+#
+# Release: gcc -O3 (portable)
+#
+release-O3: CXXFLAGS = -O3
+release-O3: LDFLAGS ?= -s
+release-O3: $(BIN)
+
+#
+# Release: gcc -O3 -march=native with mkl
+#
+MKL_INC_PATH = /opt/intel/composer_xe_2013_sp1.2.144/mkl/include
+MKL_LIB_PATH = /opt/intel/composer_xe_2013_sp1.2.144/mkl/lib/intel64
+ICC_LIB_PATH = /opt/intel/composer_xe_2013_sp1.2.144/compiler/lib/intel64
+release-mkl: CPPFLAGS += -DEIGEN_USE_MKL_ALL -I$(MKL_INC_PATH)
+release-mkl: LDFLAGS  ?= -s
+release-mkl: LIBS     += -Wl,--start-group "$(MKL_LIB_PATH)"/libmkl_intel_lp64.a "$(MKL_LIB_PATH)"/libmkl_intel_thread.a "$(MKL_LIB_PATH)"/libmkl_core.a -Wl,--end-group \
+                         -L"$(ICC_LIB_PATH)" -Wl,-Bstatic -liomp5 -Wl,-Bdynamic -lm -ldl -lpthread
+release-mkl: $(BIN)
+
+#
+# Debug: build with sanitizer
+#
+san: CXXFLAGS = $(CXXFLAGS) -g -fsanitize=undefined -fsanitize=address
+san: clean $(BIN)
+
+#
+# Debug: (Note that the last -O option take effect)
+#
+debug: CXXFLAGS = -g -Og
+debug: clean $(BIN)
+
+
+clean:
+	rm -f $(OBJ) $(BIN) stdafx.h.gch
+
+ANS100_FILE = data/a100.out
+test100: $(ANS100_FILE)
+	$(BIN) `cat HH100opts` -o data/b100.out
+	cmp $(ANS100_FILE) data/b100.out
+
+$(ANS100_FILE):
+	$(REF_BIN) `cat HH100opts` -o $@
+
+test1000:
+	$(BIN) `cat HH1000opts` -o data/b1000.out
+
+#
+# Real build targets
+#
+$(BIN) : $(OBJ)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+# $(CXX) -c $(CPPFLAGS) $(CXXFLAGS)
+$(OBJ)          : stdafx.h.gch
+datahandling.o  : datahandling.h
+datainput.o     : datainput.h     datahandling.h random.h
+loop.o          : loop.h
+myopengl.o      : myopengl.h      datahandling.h datainput.h poisson_input.h
+neuron.o        : neuron.h
+poisson_input.o : poisson_input.h datahandling.h datainput.h
+random.o        : random.h
+raster.o        : raster.h
+raster_tuning.o : datainput.h     myopengl.h poisson_input.h
+stdafx.h.gch    : stdafx.h raster.h neuron.h loop.h
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) stdafx.h
+

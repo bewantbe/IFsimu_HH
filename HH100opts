@@ -1,0 +1,1 @@
+-ng -v -inf - -n 80 20 -t 1e3 -seed 1 -mat net_100_0X65763652.txt -pr 1 -ps 0.03 -scee 0.05 -scei 0.05 -scie 0.09 -scii 0.09 --bin-save

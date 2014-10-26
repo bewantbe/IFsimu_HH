@@ -1,19 +1,7 @@
 #include "stdafx.h"
-#include "loop.h"
-#include "neuron.h"
-#include "raster.h"
 #include "datainput.h"
 #include "datahandling.h"
 #include "poisson_input.h"
-
-// Force Eigen3 to use MKL when icc is detected
-#if defined(__ICC) || defined(__INTEL_COMPILER)
-#  define EIGEN_USE_MKL_ALL
-#endif
-#define NDEBUG  // Turn off debug in Eigen3
-// Seems that icc is not good at compiling template library (such as Eigen3)
-// To have a good performance, you need to have Eigen version >= 3.2
-#include <Eigen/Dense>
 
 void (*ode_solver)(neuron*, double, double);
 
@@ -247,6 +235,33 @@ void whole_dt_vector(const neuron * const neu_val, neuron *neu_dy, double *volt,
   }
 }
 
+void get_dx_net(Eigen::ArrayXXd &dx, const Eigen::ArrayXXd &xm)
+{
+  double synaptic_volt;
+  for (int i = 0; i < g_num_neu_ex; i++) {
+    if(xm(i,0) <= 4) continue;
+    synaptic_volt = 1/(1+exp(-5*(xm(i,0) - 8.5)));
+    for (SpMat::InnerIterator it(cortical_matrix_sp, i); it; ++it) {
+      if (it.row() < g_num_neu_ex) {
+        dx(it.row(), 2) += Strength_CorEE * it.value() * synaptic_volt;
+      } else {
+        dx(it.row(), 2) += Strength_CorIE * it.value() * synaptic_volt;
+      }
+    }
+  }
+  for (int i = g_num_neu_ex; i < g_num_neu; i++) {
+    if(xm(i,0) <= 4) continue;
+    synaptic_volt = 1/(1+exp(-5*(xm(i,0) - 8.5)));
+    for (SpMat::InnerIterator it(cortical_matrix_sp, i); it; ++it) {
+      if (it.row() < g_num_neu_ex) {
+        dx(it.row(), 4) += Strength_CorEI * it.value() * synaptic_volt;
+      } else {
+        dx(it.row(), 4) += Strength_CorII * it.value() * synaptic_volt;
+      }
+    }
+  }
+}
+
 void get_dx(Eigen::ArrayXXd &dx, const Eigen::ArrayXXd &xm, double t)
 {
   const Eigen::ArrayXd &v  = xm.col(0);
@@ -258,18 +273,21 @@ void get_dx(Eigen::ArrayXXd &dx, const Eigen::ArrayXXd &xm, double t)
   const Eigen::ArrayXd &h  = xm.col(6);
   const Eigen::ArrayXd &n  = xm.col(7);
 
-  // cost 12%
+  // cost 13.3% (1000neuron), 16.4% (100neuron)
   dx.col(0) = -Con_Leakage * (v - Vot_Leakage)
               -Con_sodium * m*m*m*h * (v-Vot_sodium)
               -Con_potassium * n*n*n*n * (v-Vot_potassium)
               -gE * (v-Vot_Excitatory) - gI * (v-Vot_Inhibitory);
 
-  // cost 42%
+  // cost 55.6% (1000neuron), 59.8% (100neuron) - 52.0% (1000neuron), % (100neuron)
   // mhn
-  Eigen::ArrayXd e1(g_num_neu);
-  Eigen::ArrayXd e2(g_num_neu);
+  static Eigen::ArrayXd e1, e2;
+  if (e1.size() != g_num_neu) {
+    e1.resize(g_num_neu);
+    e2.resize(g_num_neu);
+  }
   e1 = 2.5-v;
-  e1 = exp(e1);
+  e1 = exp(e1);     // only write in this way, Eigen will use MKL
   e2 = v*(-1/1.8);
   e2 = exp(e2);
   dx.col(5) = (v-2.5)/(1-e1)*(1-m) - 4*e2*m;
@@ -282,55 +300,36 @@ void get_dx(Eigen::ArrayXXd &dx, const Eigen::ArrayXXd &xm, double t)
 
   //conductance_dt
   dx.col(1) = -gE * (1.0/Time_ExCon) + hE;
-  dx.col(3) = -gI * (1.0/Time_InCon) + hI;
   dx.col(2) = -hE * (1.0/Time_ExConR);
+  dx.col(3) = -gI * (1.0/Time_InCon) + hI;
   dx.col(4) = -hI * (1.0/Time_InConR);
 
-  // cost 7%
+  // cost 12% (1000neuron), 2.4% (100neuron)
   // Compute influence from the network (H^E and H^I)
-  double synaptic_volt;
+//  double synaptic_volt;
 //  for (int i = 0; i < g_num_neu_ex; i++) {
-//    synaptic_volt = xm(i,0)>4 ? 1/(1+exp(-5*(xm(i,0) - 8.5))) : 0.0;
-//    if(synaptic_volt == 0) continue;
-//    for (int j = 0; j < g_num_neu_ex; j++) {
-//      dx(j, 2) += Strength_CorEE * cortical_matrix[j][i] * synaptic_volt;
-//    }
-//    for (int j = g_num_neu_ex; j < g_num_neu; j++) {
-//      dx(j, 2) += Strength_CorIE * cortical_matrix[j][i] * synaptic_volt;
+//    if(xm(i,0) <= 4) continue;
+//    synaptic_volt = 1/(1+exp(-5*(xm(i,0) - 8.5)));
+//    for (SpMat::InnerIterator it(cortical_matrix_sp, i); it; ++it) {
+//      if (it.row() < g_num_neu_ex) {
+//        dx(it.row(), 2) += Strength_CorEE * it.value() * synaptic_volt;
+//      } else {
+//        dx(it.row(), 2) += Strength_CorIE * it.value() * synaptic_volt;
+//      }
 //    }
 //  }
 //  for (int i = g_num_neu_ex; i < g_num_neu; i++) {
-//    synaptic_volt = xm(i,0)>4 ? 1/(1+exp(-5*(xm(i,0) - 8.5))) : 0.0;
-//    if(synaptic_volt == 0) continue;
-//    for (int j = 0; j < g_num_neu_ex; j++) {
-//      dx(j, 4) += Strength_CorEI * cortical_matrix[j][i] * synaptic_volt;
-//    }
-//    for (int j = g_num_neu_ex; j < g_num_neu; j++) {
-//      dx(j, 4) += Strength_CorII * cortical_matrix[j][i] * synaptic_volt;
+//    if(xm(i,0) <= 4) continue;
+//    synaptic_volt = 1/(1+exp(-5*(xm(i,0) - 8.5)));
+//    for (SpMat::InnerIterator it(cortical_matrix_sp, i); it; ++it) {
+//      if (it.row() < g_num_neu_ex) {
+//        dx(it.row(), 4) += Strength_CorEI * it.value() * synaptic_volt;
+//      } else {
+//        dx(it.row(), 4) += Strength_CorII * it.value() * synaptic_volt;
+//      }
 //    }
 //  }
-  for (int i = 0; i < g_num_neu_ex; i++) {
-    synaptic_volt = xm(i,0)>4 ? 1/(1+exp(-5*(xm(i,0) - 8.5))) : 0.0;
-    if(synaptic_volt == 0) continue;
-    for (SpMat::InnerIterator it(cortical_matrix_sp, i); it; ++it) {
-      if (it.row() < g_num_neu_ex) {
-        dx(it.row(), 2) += Strength_CorEE * it.value() * synaptic_volt;
-      } else {
-        dx(it.row(), 2) += Strength_CorIE * it.value() * synaptic_volt;
-      }
-    }
-  }
-  for (int i = g_num_neu_ex; i < g_num_neu; i++) {
-    synaptic_volt = xm(i,0)>4 ? 1/(1+exp(-5*(xm(i,0) - 8.5))) : 0.0;
-    if(synaptic_volt == 0) continue;
-    for (SpMat::InnerIterator it(cortical_matrix_sp, i); it; ++it) {
-      if (it.row() < g_num_neu_ex) {
-        dx(it.row(), 4) += Strength_CorEI * it.value() * synaptic_volt;
-      } else {
-        dx(it.row(), 4) += Strength_CorII * it.value() * synaptic_volt;
-      }
-    }
-  }
+  get_dx_net(dx, xm);
 }
 #endif // if SMOOTH_CONDUCTANCE_USE && CORTICAL_STRENGTH_NONHOMO && !EXPONENTIAL_IF_USE
 
@@ -663,11 +662,14 @@ void runge_kutta4(neuron *tempneu, double subTstep, double t_evolution)
 void runge_kutta4_vec(neuron *tempneu, double subTstep, double t_evolution)
 {
   int i, j;
-  Eigen::ArrayXXd xt(g_num_neu, 2*Stepsmooth_Con+4);  // all variables of all neurons
-  Eigen::ArrayXXd k1(g_num_neu, 2*Stepsmooth_Con+4);
-  Eigen::ArrayXXd k2(g_num_neu, 2*Stepsmooth_Con+4);
-  Eigen::ArrayXXd k3(g_num_neu, 2*Stepsmooth_Con+4);
-  Eigen::ArrayXXd k4(g_num_neu, 2*Stepsmooth_Con+4);
+  static Eigen::ArrayXXd xt, k1, k2, k3, k4;  // all variables of all neurons each
+  if (xt.rows() != g_num_neu || xt.cols() != 2*Stepsmooth_Con+4) {
+    xt.resize(g_num_neu, 2*Stepsmooth_Con+4);
+    k1.resize(g_num_neu, 2*Stepsmooth_Con+4);
+    k2.resize(g_num_neu, 2*Stepsmooth_Con+4);
+    k3.resize(g_num_neu, 2*Stepsmooth_Con+4);
+    k4.resize(g_num_neu, 2*Stepsmooth_Con+4);
+  }
 
   for (i = 0; i<g_num_neu; i++) {
     for (j = 0; j<2*Stepsmooth_Con+4; j++) {

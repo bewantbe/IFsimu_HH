@@ -29,6 +29,15 @@
 #include <GL/glu.h>
 #include <GL/glut.h>
 
+// Force Eigen3 to use MKL when icc is detected
+#if defined(__ICC) || defined(__INTEL_COMPILER)
+#  define EIGEN_USE_MKL_ALL
+#endif
+#define NDEBUG  // Turn off debug in Eigen3
+// Seems that icc is not good at compiling template library (such as Eigen3)
+// To have a good performance, you need to have Eigen version >= 3.2
+#include <Eigen/Dense>
+
 /// data structure
 #include "raster.h"
 #include "neuron.h"

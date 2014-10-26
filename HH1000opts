@@ -1,0 +1,1 @@
+-ng -v -inf - -n 750 250 -t 1e3 -seed 1 -mat net_1000_0X12CACB0E.txt -pr 0.7 -ps 0.032 -scee 0.04 -scei 0.04 -scie 0.07 -scii 0.07 --bin-save

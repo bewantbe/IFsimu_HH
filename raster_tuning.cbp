@@ -8,21 +8,19 @@
 		<Build>
 			<Target title="Release Linux + MKL">
 				<Option platforms="Unix;" />
-				<Option output="bin/Release/raster_tuning_HH3_gcc" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/raster_tuning_HH3_gcc_mkl" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="./" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="-ng -v -inf - -n 80 20 -t 1e3 -seed 1 -mat net_100_0X65763652.txt -pr 1 -ps 0.03 -scee 0.05 -scei 0.07 -scie 0.09 -scii 0.09 --bin-save -o ./data/a.dat" />
+				<Option parameters="-ng -v -inf - -n 80 20 -t 1e3 -seed 1 -mat net_100_0X65763652.txt -pr 1 -ps 0.03 -scee 0.05 -scei 0.05 -scie 0.09 -scii 0.09 --bin-save" />
 				<Compiler>
-					<Add option="-march=corei7-avx" />
 					<Add option="-O2" />
 					<Add option="-DEIGEN_USE_MKL_ALL" />
 					<Add directory="/usr/include/eigen3" />
 					<Add directory="/opt/intel/composer_xe_2013_sp1.2.144/mkl/include" />
 				</Compiler>
 				<Linker>
-					<Add option="-s" />
 					<Add option='-Wl,--start-group &quot;/opt/intel/composer_xe_2013_sp1.2.144/mkl/lib/intel64&quot;/libmkl_intel_lp64.a &quot;/opt/intel/composer_xe_2013_sp1.2.144/mkl/lib/intel64&quot;/libmkl_intel_thread.a &quot;/opt/intel/composer_xe_2013_sp1.2.144/mkl/lib/intel64&quot;/libmkl_core.a -Wl,--end-group -L&quot;/opt/intel/composer_xe_2013_sp1.2.144/mkl/../compiler/lib/intel64&quot; -Wl,-Bstatic -liomp5 -Wl,-Bdynamic -lm -ldl -lpthread' />
 					<Add library="GL" />
 					<Add library="GLU" />
@@ -31,7 +29,7 @@
 			</Target>
 			<Target title="Debug Linux +MKL">
 				<Option platforms="Unix;" />
-				<Option output="bin/Debug/raster_tuning_HH3_gcc" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/raster_tuning_HH3_gcc_mkl" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="./" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
@@ -57,14 +55,13 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="-ng -v -inf - -n 80 20 -t 1e3 -seed 1 -mat net_100_0X65763652.txt -pr 1 -ps 0.03 -scee 0.05 -scei 0.07 -scie 0.09 -scii 0.09 --bin-save -o ./data/a.dat" />
+				<Option parameters="-ng -v -inf - -n 80 20 -t 1e3 -seed 1 -mat net_100_0X65763652.txt -pr 1 -ps 0.03 -scee 0.05 -scei 0.05 -scie 0.09 -scii 0.09 --bin-save" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-pedantic" />
 					<Add directory="/usr/include/eigen3" />
 				</Compiler>
 				<Linker>
-					<Add option="-s" />
 					<Add library="GL" />
 					<Add library="GLU" />
 					<Add library="glut" />
@@ -124,7 +121,7 @@
 			</Target>
 			<Target title="test Release Linux + MKL">
 				<Option platforms="Unix;" />
-				<Option output="bin/Release/raster_tuning_HH3_gcc" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/raster_tuning_HH3_gcc_mkl" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="./" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
@@ -301,7 +298,6 @@
 			<Option target="Release Linux + MKL" />
 		</Unit>
 		<Unit filename="stdafx.h">
-			<Option compile="1" />
 			<Option weight="1" />
 			<Option target="Debug Linux" />
 			<Option target="Release Linux" />

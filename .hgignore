@@ -1,11 +1,13 @@
 syntax:glob
 *~
-.*.swp
 \#*\#
-tags
 *.o
+*.gch
+.*.swp
+gmon.out
 raster_tuning.layout
+tags
 .ycm_extra_conf.pyc
-*.layout
 data/
-bin/Release/raster_tuning_HH
+bin/
+eigen3/

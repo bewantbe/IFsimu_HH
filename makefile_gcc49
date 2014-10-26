@@ -1,14 +1,14 @@
 # Project: cleanIFcode
 # make -f makefile_gcc
 
-CPP  = $(HOME)/gcc4.9.1/bin/g++ -O3 -march=native -Wall
+CPP  = $(HOME)/gcc4.9.1/bin/g++ -O3 -march=native -Wall -Wno-unused-local-typedefs -fdiagnostics-color=auto
 #-fsanitize=undefined -fsanitize=address
 #CPP  = $(HOME)/gcc4.9.1/bin/g++ -O2
 OBJ  = datahandling.o datainput.o loop.o myopengl.o neuron.o poisson_input.o random.o raster.o raster_tuning.o
 LINKOBJ = datahandling.o datainput.o loop.o myopengl.o neuron.o poisson_input.o random.o raster.o raster_tuning.o
 #LIBS    = -lGL -lGLU -lglut -static-libgcc -static-libstdc++ -Wl,-rpath -Wl,$(HOME)/gcc4.9.1/lib -Wl,-rpath -Wl,$(HOME)/gcc4.9.1/lib64 -s
 LIBS    = -lGL -lGLU -lglut -static-libgcc -static-libstdc++ -s
-CXXINCS = -I"/usr/include/eigen3"
+CXXINCS = -I"./eigen3"
 BIN     = raster_tuning
 CXXFLAGS = $(CXXINCS)
 

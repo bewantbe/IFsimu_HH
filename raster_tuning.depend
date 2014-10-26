@@ -1020,7 +1020,7 @@
 	"stdafx.h"
 	"datahandling.h"
 
-1407593061 /homeData/xyy/code/IFsimu/stdafx.h
+1413971241 /homeData/xyy/code/IFsimu/stdafx.h
 	<stdio.h>
 	<stdlib.h>
 	<limits.h>
@@ -1031,9 +1031,11 @@
 	<GL/gl.h>
 	<GL/glu.h>
 	<GL/glut.h>
+	<Eigen/Dense>
 	"raster.h"
 	"neuron.h"
 	"loop.h"
+	<Eigen/Sparse>
 
 1407505409 /homeData/xyy/code/IFsimu/raster.h
 
@@ -1043,7 +1045,7 @@
 
 1407505409 /homeData/xyy/code/IFsimu/datahandling.h
 
-1407580538 source:/homeData/xyy/code/IFsimu/datainput.cpp
+1413753616 source:/homeData/xyy/code/IFsimu/datainput.cpp
 	"stdafx.h"
 	"random.h"
 	"datainput.h"
@@ -1079,7 +1081,7 @@
 	"stdafx.h"
 	"neuron.h"
 
-1407670492 source:/homeData/xyy/code/IFsimu/poisson_input.cpp
+1414044292 source:/homeData/xyy/code/IFsimu/poisson_input.cpp
 	"stdafx.h"
 	"loop.h"
 	"neuron.h"
@@ -1087,7 +1089,6 @@
 	"datainput.h"
 	"datahandling.h"
 	"poisson_input.h"
-	<Eigen/Dense>
 
 1399799160 source:/homeData/xyy/code/IFsimu/random.cpp
 	"stdafx.h"
@@ -1097,7 +1098,7 @@
 	"stdafx.h"
 	"raster.h"
 
-1407505409 source:/homeData/xyy/code/IFsimu/raster_tuning.cpp
+1413753616 source:/homeData/xyy/code/IFsimu/raster_tuning.cpp
 	"stdafx.h"
 	<sys/types.h>
 	<sys/stat.h>
