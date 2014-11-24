@@ -1,0 +1,89 @@
+xhp7
+gcc 4.9.1
+i5-2400 CPU @ 3.10GHz
+
+ Performance counter stats for 'bin/raster_tuning_HH3_gcc49 -ng -v -inf - -n 80 20 -t 1e3 -seed 1 -mat net_100_0X65763652.txt -pr 1 -ps 0.03 -scee 0.05 -scei 0.05 -scie 0.09 -scii 0.09 --bin-save -q -o data/b100.out':
+
+       3288.595932      task-clock (msec)         #    0.999 CPUs utilized          
+                17      context-switches          #    0.005 K/sec                  
+                 0      cpu-migrations            #    0.000 K/sec                  
+             1,873      page-faults               #    0.570 K/sec                  
+    10,946,792,579      cycles                    #    3.329 GHz                    
+     4,205,354,080      stalled-cycles-frontend   #   38.42% frontend cycles idle   
+     1,165,519,416      stalled-cycles-backend    #   10.65% backend  cycles idle   
+    21,230,437,848      instructions              #    1.94  insns per cycle        
+                                                  #    0.20  stalled cycles per insn
+     2,437,255,379      branches                  #  741.123 M/sec                  
+        10,093,511      branch-misses             #    0.41% of all branches        
+
+       3.290930358 seconds time elapsed
+
+# v = v - (v+6)*(v+5)*(v-1)/(19+(20+3*v)*v);
+Elapsed time is 1.666782 seconds. 5.2 clk each
+a[1] = 1
+Elapsed time is 1.580137 seconds. 4.9 clk each
+v[1] = 1
+
+ Performance counter stats for './bin/Release/speed_vec_eigen 100 10000000':
+
+       3249.297501      task-clock (msec)         #    1.000 CPUs utilized          
+                15      context-switches          #    0.005 K/sec                  
+                 1      cpu-migrations            #    0.000 K/sec                  
+               633      page-faults               #    0.195 K/sec                  
+    10,821,515,047      cycles                    #    3.330 GHz                    
+     6,969,767,063      stalled-cycles-frontend   #   64.41% frontend cycles idle   
+     2,542,196,327      stalled-cycles-backend    #   23.49% backend  cycles idle   
+    14,568,615,227      instructions              #    1.35  insns per cycle        
+                                                  #    0.48  stalled cycles per insn
+       891,614,436      branches                  #  274.402 M/sec                  
+        10,033,493      branch-misses             #    1.13% of all branches        
+
+       3.250419457 seconds time elapsed
+
+# MKL cos() (no glibc cos(), should be computational intensity)
+Elapsed time is 0.000001 seconds. 0.0 clk each
+a[1] = 0.394383
+Elapsed time is 3.151035 seconds. 9.8 clk each
+v[1] = 0.739085
+
+ Performance counter stats for './bin/Release/speed_vec_eigen 100 10000000':
+
+       3152.726596      task-clock (msec)         #    0.999 CPUs utilized          
+                21      context-switches          #    0.007 K/sec                  
+                 0      cpu-migrations            #    0.000 K/sec                  
+               856      page-faults               #    0.272 K/sec                  
+    10,493,583,804      cycles                    #    3.328 GHz                    
+     4,190,413,244      stalled-cycles-frontend   #   39.93% frontend cycles idle   
+       521,442,643      stalled-cycles-backend    #    4.97% backend  cycles idle   
+    20,749,885,525      instructions              #    1.98  insns per cycle        
+                                                  #    0.20  stalled cycles per insn
+     1,111,878,731      branches                  #  352.672 M/sec                  
+            43,433      branch-misses             #    0.00% of all branches        
+
+       3.155021889 seconds time elapsed
+
+
+# glibc cos() v.s. MKL cos()
+Elapsed time is 11.540945 seconds. 35.8 clk each
+a[1] = 0.739085
+Elapsed time is 3.059026 seconds. 9.5 clk each
+v[1] = 0.739085
+
+ Performance counter stats for './bin/Release/speed_vec_eigen 100 10000000':
+
+      14599.622460      task-clock (msec)         #    1.000 CPUs utilized          
+                44      context-switches          #    0.003 K/sec                  
+                 2      cpu-migrations            #    0.000 K/sec                  
+               872      page-faults               #    0.060 K/sec                  
+    49,169,564,036      cycles                    #    3.368 GHz                    
+    20,248,812,952      stalled-cycles-frontend   #   41.18% frontend cycles idle   
+     2,054,030,282      stalled-cycles-backend    #    4.18% backend  cycles idle   
+   103,829,341,572      instructions              #    2.11  insns per cycle        
+                                                  #    0.20  stalled cycles per insn
+    11,133,607,012      branches                  #  762.596 M/sec                  
+        10,053,467      branch-misses             #    0.09% of all branches        
+
+      14.603712358 seconds time elapsed
+
+
+
