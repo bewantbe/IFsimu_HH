@@ -1,0 +1,110 @@
+gcc49 -O3 native
+3.370
+205.810
+
+gcc49 -O3 native mkl
+3.290
+185.740
+
+gcc49 -O3
+3.520
+213.630
+
+gcc49 -O3 mkl
+3.350
+186.670
+
+
+gcc49 -O3 native -g -pg
+211.980
+
+gcc49 -O3 native mkl -g -pg
+192.200
+
+     192065.455433      task-clock (msec)         #    1.000 CPUs utilized          
+               602      context-switches          #    0.003 K/sec                  
+                 6      cpu-migrations            #    0.000 K/sec                  
+            13,755      page-faults               #    0.072 K/sec                  
+   650,409,555,662      cycles                    #    3.386 GHz                    
+   275,552,894,984      stalled-cycles-frontend   #   42.37% frontend cycles idle   
+    68,196,948,466      stalled-cycles-backend    #   10.49% backend  cycles idle   
+ 1,249,661,316,110      instructions              #    1.92  insns per cycle        
+                                                  #    0.22  stalled cycles per insn
+   144,726,075,304      branches                  #  753.525 M/sec                  
+       534,267,279      branch-misses             #    0.37% of all branches        
+
+     192.132825704 seconds time elapsed
+
+
+
+
+
+
+--------------
+dell (before optimize)
+Samples: 3M of event 'cycles', Event count (approx.): 207981365014              
+ 88.50%  raster_tuning_HH3_gcc49_sparse  [.] 0x000000000004a64f                 
+  3.12%  libc-2.19.so                    [.] _int_free                          
+  2.31%  libc-2.19.so                    [.] _int_malloc                        
+  1.63%  libm-2.19.so                    [.] __ieee754_exp_sse2                 
+  1.27%  libc-2.19.so                    [.] malloc                             
+  1.01%  libc-2.19.so                    [.] __memcpy_sse2_unaligned            
+  0.70%  libc-2.19.so                    [.] free                               
+  0.37%  [kernel]                        [k] smp_apic_timer_interrupt           
+  0.24%  [kernel]                        [k] irq_exit                           
+  0.11%  perf                            [.] 0x0000000000068c63                 
+  0.08%  raster_tuning_HH3_gcc49_sparse  [.] malloc@plt                         
+  0.08%  raster_tuning_HH3_gcc49_sparse  [.] free@plt                           
+  0.08%  libm-2.19.so                    [.] __GI___exp                         
+  0.08%  raster_tuning_HH3_gcc49_sparse  [.] memcpy@plt                         
+  0.03%  libc-2.19.so                    [.] malloc_consolidate                 
+
+xhp (after optimize)
+Events: 182K cycles                                                             
+ 86.49%  raster_tuning_HH3_gcc49             [.] 0x4d50d                        
+  3.35%  libc-2.13.so                        [.] _int_malloc                    
+  2.57%  libm-2.13.so                        [.] __ieee754_exp                  
+  2.16%  libc-2.13.so                        [.] malloc                         
+  1.90%  libc-2.13.so                        [.] _int_free                      
+  1.29%  libc-2.13.so                        [.] free                           
+  1.01%  libc-2.13.so                        [.] __memcpy_ssse3                 
+  0.16%  libm-2.13.so                        [.] __GI___exp                     
+  0.11%  [kernel]                            [k] delay_tsc                      
+  0.10%  raster_tuning_HH3_gcc49             [.] memcpy@plt                     
+  0.09%  raster_tuning_HH3_gcc49             [.] free@plt                       
+  0.09%  raster_tuning_HH3_gcc49             [.] malloc@plt                       0.08%  [kernel]                            [k] native_read_tsc                  0.05%  libm-2.13.so                        [.] __finite                       
+  0.05%  [kernel]                            [k] ioread32                       
+  0.04%  [kernel]                            [k] paravirt_read_tsc              
+  0.03%  tmux                                [.] 0x2d45a                        
+  0.03%  libm-2.13.so                        [.] __ieee754_log                  
+  0.02%  [kernel]                            [k] intel_idle                     
+
+
+time bin/Release/raster_tuning_HH3_gcc49 $(cat HH1000opts) -o data/b2.dat
+207.780
+207.670
+208.350
+209.72
+
+time ~/matcode/prj_GC_clean/HH/raster_tuning_HH3_gcc49_sparse $(cat HH1000opts) -o data/b.dat
+228.710
+228.61
+
+10%
+
+% ~/matcode/prj_GC_clean/HH/raster_tuning_HH3_gcc49
+1579.640
+
+220.880  with load
+220.580
+
+220.720
+
+
+if () continue;
+208.080
+
+if () {}
+208.050
+
+2014-10-24
