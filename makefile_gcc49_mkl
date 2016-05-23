@@ -21,11 +21,11 @@
 #$ make -f makefile_gcc49_mkl test1000
 #$ gprof bin/raster_tuning_HH3_gcc49 gmon.out > g.txt
 
-# shared link gcc 4.9 lib (so no need to install gcc4.9 on target)
-#$ make -f makefile_gcc49_mkl shared=1
+# Static linking gcc libs (so no need to install gcc4.9 on target)
+#$ make -f makefile_gcc49_mkl static=1
 
-CXX = $(HOME)/gcc4.9.1/bin/g++
-CXXFLAGS = -O3 -march=native
+CXX = g++
+CXXFLAGS = -O3 -march=westmere -flto -fipa-pta -DNO_GRAPHICS
 CPPFLAGS = -I"./eigen3" -ansi -Wall -Wno-unused-local-typedefs -fdiagnostics-color=auto
 OBJ     = datahandling.o datainput.o loop.o myopengl.o neuron.o \
           poisson_input.o random.o raster.o raster_tuning.o
@@ -34,10 +34,16 @@ BIN     = bin/raster_tuning_HH3_gcc49
 # used to generate reference answer
 REF_BIN = $(HOME)/matcode/prj_GC_clean/HH/raster_tuning_HH3_gcc
 
-ifeq ($(strip $(shared)),)
-LIBS = -lglut -lGLU -lGL -static-libgcc -static-libstdc++
+#CXXLIB64 = $(HOME)/gcc4.9.1/lib64    # for home build gcc
+CXXLIB64 = /usr/lib/x86_64-linux-gnu/
+
+# static linking by default
+ifneq ($(strip $(static)),0)
+#LIBS = -lglut -lGLU -lGL -static-libgcc -static-libstdc++
+LIBS = -static-libgcc -static-libstdc++ -static
+#note: libGLU will (still) relies on libstdc++.so But that should not be a problem
 else
-LIBS = -lglut -lGLU -lGL -Wl,-rpath -Wl,$(HOME)/gcc4.9.1/lib64
+LIBS = -lglut -lGLU -lGL -Wl,-rpath -Wl,$(CXXLIB64)
 endif
 
 .PHONY : release release-O3 release-mkl san debug clean test100 ans100 test1000
@@ -58,13 +64,13 @@ release-O3: $(BIN)
 #
 # Release: gcc -O3 -march=native with mkl
 #
-MKL_INC_PATH = /opt/intel/composer_xe_2013_sp1.2.144/mkl/include
-MKL_LIB_PATH = /opt/intel/composer_xe_2013_sp1.2.144/mkl/lib/intel64
-ICC_LIB_PATH = /opt/intel/composer_xe_2013_sp1.2.144/compiler/lib/intel64
+MKL_INC_PATH = /opt/intel/mkl/include
+MKL_LIB_PATH = /opt/intel/mkl/lib/intel64
+ICC_LIB_PATH = /opt/intel/compilers_and_libraries_2016.1.150/linux/compiler/lib/intel64_lin
 release-mkl: CPPFLAGS += -DEIGEN_USE_MKL_ALL -I$(MKL_INC_PATH)
-release-mkl: LDFLAGS  ?= -s
+release-mkl: LDFLAGS  ?= -s -flto
 release-mkl: LIBS     += -Wl,--start-group "$(MKL_LIB_PATH)"/libmkl_intel_lp64.a "$(MKL_LIB_PATH)"/libmkl_intel_thread.a "$(MKL_LIB_PATH)"/libmkl_core.a -Wl,--end-group \
-                         -L"$(ICC_LIB_PATH)" -Wl,-Bstatic -liomp5 -Wl,-Bdynamic -lm -ldl -lpthread
+                         -L"$(ICC_LIB_PATH)" -Wl,-Bstatic -liomp5 -lm -ldl -lpthread
 release-mkl: $(BIN)
 
 #

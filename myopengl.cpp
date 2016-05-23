@@ -1,3 +1,5 @@
+#ifndef NO_GRAPHICS
+
 #include "stdafx.h"
 #include "myopengl.h"
 #include "datainput.h"
@@ -845,3 +847,4 @@ void DrawGLScene()
   }
   glutSwapBuffers();       // since double buffered
 }
+#endif

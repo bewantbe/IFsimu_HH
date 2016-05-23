@@ -4,7 +4,10 @@
 #include <time.h>
 #include "datainput.h"
 #include "poisson_input.h"
+
+#ifndef NO_GRAPHICS
 #include "myopengl.h"
+#endif
 
 #ifndef _WINDOWS_USE_
 #include <sys/file.h>   // for checking file lock state
@@ -14,6 +17,7 @@
 
 int RUN_DONE = 0;
 
+#ifndef NO_GRAPHICS
 GLfloat xdepth = 0.0;
 GLfloat ydepth = 0.0;
 GLfloat zdepth = -3.0;
@@ -25,7 +29,9 @@ int STEPS_PER_DRAW = 128;         ///HERE
 int STD_VIEW = 1;
 int DRAW_FLAG = 0;
 int FULL_SCREEN = 0;
+#endif
 int WINDOW_BIN_LENGTH = 512;
+
 double SLIGHT_BIN = 0.5;          ///HERE SLIGHT_BIN = update_timestep of GLOBAL_STRA
 int GRAYSCALE = 0;
 double GLOBAL_TI = 0;
@@ -924,6 +930,7 @@ int main(int argc, char *argv[])
     if (!g_b_quiet)
       printf("done.\n");
   } else {
+#ifndef NO_GRAPHICS
     // select display mode, 2xbuffer,rgba,alpha,depth_buffer
     if (g_b_verbose_debug) { printf(" calling glutInitDisplayMode\n"); fflush(stdout); }
   //  glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | GLUT_DEPTH);
@@ -961,6 +968,9 @@ int main(int argc, char *argv[])
     // start processing
     if (g_b_verbose_debug) { printf(" Passing to main loop\n"); fflush(stdout); }
     glutMainLoop();
+#else
+    fprintf(stderr, "Compiled with no graphics!\n");
+#endif
   }
   //system("pause");
 

@@ -25,9 +25,11 @@
 #  define Sleep(msec) usleep((msec)*1000)  // replace Sleep() in winbase.h (in Windows)
 #endif
 
+#ifndef NO_GRAPHICS
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glut.h>
+#endif
 
 // Force Eigen3 to use MKL when icc is detected
 #if defined(__ICC) || defined(__INTEL_COMPILER)
@@ -139,7 +141,8 @@ static inline int myisnan(double x) { return x != x; }
 // the reset value for voltage after spike
 #define VOT_RESET       0.0
 // the threshold value for voltage
-#define Vot_Threshold   1.0//-55.0
+//#define Vot_Threshold   1.0// -55.0 mV
+#define Vot_Threshold   7.5// 5.0 mV
 #endif
 
 // the resting value of leakage channel conductance
@@ -195,7 +198,7 @@ extern FILE *g_cond_out;
 
 ////////////////////////////////////////////////////////////
 // Global variables for GUI
-
+#ifndef NO_GRAPHICS
 // these are global variables used in open GL
 extern GLfloat xdepth;
 extern GLfloat ydepth;
@@ -205,21 +208,23 @@ extern int GLOBAL_WINDOW_WIDTH;
 extern int GLOBAL_WINDOW_HEIGHT;
 extern int FULL_SCREEN;
 
-extern int GRAYSCALE;
-// the initial time for the run
-extern double GLOBAL_TI;
-// this is the whole time length of data shown in the window screen
-// normally, this is choosen as 512 ms.
-extern int WINDOW_BIN_LENGTH;
 // this number indicates the position of cursor in the menu
 extern int FIDDLE_PARAMETER;
 // this indicates after how many time steps, for the data to show on the screen
 extern int STEPS_PER_DRAW;
 extern int STD_VIEW;
-// this is the strobe structure used in open GL
-extern struct strobe **GLOBAL_STRA;
 // this number indicates the corresponding variable shown in the window screen
 extern int DRAW_FLAG;
+#endif
+
+extern int GRAYSCALE;
+// the initial time for the run
+extern double GLOBAL_TI;
+// this is the strobe structure used in open GL
+extern struct strobe **GLOBAL_STRA;
+// this is the whole time length of data shown in the window screen
+// normally, this is choosen as 512 ms.
+extern int WINDOW_BIN_LENGTH;
 
 ////////////////////////////////////////////////////////////
 // simulation related global variables
