@@ -1092,7 +1092,7 @@ void compute_perstep()
         fprintf(g_fout,"\n");
       }
       if (g_cond_out) {                           // save conductance
-       if (g_b_save_use_binary) {                  // save volt in binary format
+      if (g_b_save_use_binary) {                  // save volt in binary format
         for (i = g_num_neu; i < 2*g_num_neu; i++)
           fwrite(&(GLOBAL_STRA[i]->data[oldtab]), sizeof(double), 1, g_cond_out);
         for (i = (Stepsmooth_Con+1)*g_num_neu; i < (Stepsmooth_Con+2)*g_num_neu; i++)

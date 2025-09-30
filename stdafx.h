@@ -121,7 +121,7 @@ static inline int myisnan(double x) { return x != x; }
 //#define TIME_LENGTH 20.0
 
 // decay time scale of Ex_conductance
-#define Time_ExCon      0.5  ///jyl:modify this
+#define Time_ExCon      0.5
 //decay time scale of high-order Ex_conductance
 #define Time_ExConR     3.0
 // decay time scale of In_conductance
@@ -129,8 +129,8 @@ static inline int myisnan(double x) { return x != x; }
 // decay time scale of high-order In_conductance
 #define Time_InConR     7.0
 // Separate Poisson excitatory conductance uses its own time constants (aliases reuse existing)
-#define Time_ExCon_P  Time_ExCon
-#define Time_ExConR_P Time_ExConR
+#define Time_ExCon_P  0.5
+#define Time_ExConR_P 3.0
 
 #define xleft   -5
 #define gleft  0.0066928509242
