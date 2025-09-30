@@ -24,7 +24,7 @@ void neuron_set_value(neuron &neu, int typ, int state_neu, int step_con)
   neu.state_neuron = state_neu;
   neu.step_conductance = step_con;
 
-  neu.value = (double *)calloc(2*step_con+4, sizeof(double));
+  neu.value = (double *)calloc(2*step_con+6, sizeof(double)); // +2 for gE_P,hE_P
   P_NULL_ERR(neu.value, "Error: neuron_set_value: Allocation failed.");
 
   neu.is_allocated = true;
@@ -44,8 +44,8 @@ void neuron_copy(neuron &neu, const neuron &src)
     neu.type = src.type;
     neu.state_neuron = src.state_neuron;
     neu.step_conductance = src.step_conductance;
-    neu.value = (double*)malloc((2*src.step_conductance+4)*sizeof(double));
-    memcpy(neu.value, src.value, (2*src.step_conductance+4)*sizeof(double));
+    neu.value = (double*)malloc((2*src.step_conductance+6)*sizeof(double)); // adjusted for Poisson gE_P,hE_P
+    memcpy(neu.value, src.value, (2*src.step_conductance+6)*sizeof(double));
   }
 }
 
@@ -56,13 +56,13 @@ void neuron_copy_2(neuron &neu, const neuron &src)
     return;
   }
   if(neu.is_allocated == false) {
-    neu.value = (double*)malloc((2*src.step_conductance+4)*sizeof(double));
+    neu.value = (double*)malloc((2*src.step_conductance+6)*sizeof(double));
     neu.is_allocated = true;
   }
   neu.type = src.type;
   neu.state_neuron = src.state_neuron;
   neu.step_conductance = src.step_conductance;
-  memcpy(neu.value, src.value, (2*src.step_conductance+4)*sizeof(double));
+  memcpy(neu.value, src.value, (2*src.step_conductance+6)*sizeof(double));
 }
 
 // copy data, assum neu and src have the same type
@@ -71,5 +71,5 @@ void neuron_copy_raw_static(neuron &neu, const neuron &src)
 //  neu.type = src.type;
   neu.state_neuron = src.state_neuron;
 //  neu.step_conductance = Stepsmooth_Con;
-  memcpy(neu.value, src.value, (2*Stepsmooth_Con+4)*sizeof(double));
+  memcpy(neu.value, src.value, size_neuronvar*sizeof(double));
 }

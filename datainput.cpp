@@ -559,6 +559,9 @@ void input_initialization()
     neu[i].value[2*Stepsmooth_Con+1] = ran0(&initial_pertub_m);
     neu[i].value[2*Stepsmooth_Con+2] = ran0(&initial_pertub_h);
     neu[i].value[2*Stepsmooth_Con+3] = ran0(&initial_pertub_n);
+    // Initialize separate Poisson excitatory conductance variables (gE_P, hE_P)
+    neu[i].value[2*Stepsmooth_Con+4] = 0.0;
+    neu[i].value[2*Stepsmooth_Con+5] = 0.0;
 #if SMOOTH_CONDUCTANCE_USE
     neu[i].value[2] = ran0(&initial_pertub_Ex_H);
     neu[i].value[3] = ran0(&initial_pertub_Ex_I);
@@ -577,6 +580,8 @@ void input_initialization()
     neu[i].value[5] = 0.052934217620863984;  // m
     neu[i].value[6] = 0.5961110463468279;  // h
     neu[i].value[7] = 0.31768116757978115;  // n
+    neu[i].value[8] = 0.0;  // gE_P (separate Poisson excitatory conductance)
+    neu[i].value[9] = 0.0;  // hE_P (driving variable for gE_P)
 #endif
   }
 #if POISSON_INPUT_USE

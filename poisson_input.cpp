@@ -12,7 +12,8 @@ void force_inputR( neuron *tempneu, int index_neuron)
 {
   // excitatory conductance
 //  tempneu[index_neuron].value[Stepsmooth_Con] += Strength_Exinput;
-  tempneu[index_neuron].value[Stepsmooth_Con] += g_arr_poisson_strength_E[index_neuron];
+  // Poisson excitatory input now adds to separate hE_P reservoir (index 2*Stepsmooth_Con+5)
+  tempneu[index_neuron].value[2*Stepsmooth_Con+5] += g_arr_poisson_strength_E[index_neuron];
   // inhibitory conductance
 //  tempneu[index_neuron].value[2*Stepsmooth_Con] += Strength_Ininput;
   tempneu[index_neuron].value[2*Stepsmooth_Con] += g_arr_poisson_strength_I[index_neuron];
@@ -52,16 +53,17 @@ void whole_dt(const neuron * const neu_val, neuron *neu_dt, double *volt, int in
   double v  = neu_i_val[0];
   double gE = neu_i_val[1];
   double gI = neu_i_val[Stepsmooth_Con+1];
+  double gE_P = neu_i_val[2*Stepsmooth_Con+4]; // added Poisson excitatory conductance
   double m  = neu_i_val[2*Stepsmooth_Con+1];
   double h  = neu_i_val[2*Stepsmooth_Con+2];
   double n  = neu_i_val[2*Stepsmooth_Con+3];
 
 # if EXPONENTIAL_IF_USE
   neu_i_dt[0] = - Con_Leakage*(v - Vot_Leakage) - Con_sodium*m*m*m*h*(v-Vot_sodium) - Con_potassium*n*n*n*n*(v - Vot_potassium)
-          - gE*(v - Vot_Excitatory) - gI*(v - Vot_Inhibitory) + Con_Leakage*VOT_DELTAT*exp((v-VOT_TAKEOFF)/VOT_DELTAT);
+          - (gE+gE_P)*(v - Vot_Excitatory) - gI*(v - Vot_Inhibitory) + Con_Leakage*VOT_DELTAT*exp((v-VOT_TAKEOFF)/VOT_DELTAT);
 # else
   neu_i_dt[0] = - Con_Leakage*(v - Vot_Leakage) - Con_sodium*m*m*m*h*(v-Vot_sodium) - Con_potassium*n*n*n*n*(v - Vot_potassium)
-          - gE*(v - Vot_Excitatory) - gI*(v - Vot_Inhibitory);
+          - (gE+gE_P)*(v - Vot_Excitatory) - gI*(v - Vot_Inhibitory);
 # endif
 
 //mhn_dt
@@ -83,6 +85,9 @@ int index_firing = -1;
   }
   neu_i_dt[Stepsmooth_Con] = -neu_i_val[Stepsmooth_Con]/Time_ExConR ;
   neu_i_dt[2*Stepsmooth_Con] = -neu_i_val[2*Stepsmooth_Con]/Time_InConR ;
+  // Added Poisson excitatory conductance dynamics
+  neu_i_dt[2*Stepsmooth_Con+4] = -neu_i_val[2*Stepsmooth_Con+4]/Time_ExCon_P + neu_i_val[2*Stepsmooth_Con+5];
+  neu_i_dt[2*Stepsmooth_Con+5] = -neu_i_val[2*Stepsmooth_Con+5]/Time_ExConR_P;
 
 #if CORTICAL_STRENGTH_NONHOMO
   for (index_firing = 0; index_firing<g_num_neu; index_firing++) {
@@ -173,15 +178,19 @@ for (index_firing = 0;index_firing<g_num_neu;index_firing++) {
 void whole_dt_single(const double * const &neu_i_val, double *&neu_i_dy, double t)
 {
   //dv_dt
-  double v  = neu_i_val[0];
-  double gE = neu_i_val[1];
-  double gI = neu_i_val[Stepsmooth_Con+1];
-  double m  = neu_i_val[2*Stepsmooth_Con+1];
-  double h  = neu_i_val[2*Stepsmooth_Con+2];
-  double n  = neu_i_val[2*Stepsmooth_Con+3];
+  double v    = neu_i_val[0];
+  double gE   = neu_i_val[1];
+  double gI   = neu_i_val[Stepsmooth_Con+1];
+  double m    = neu_i_val[2*Stepsmooth_Con+1];
+  double h    = neu_i_val[2*Stepsmooth_Con+2];
+  double n    = neu_i_val[2*Stepsmooth_Con+3];
+  double gE_P = neu_i_val[2*Stepsmooth_Con+4]; // separate Poisson excitatory conductance
 
-  neu_i_dy[0] = - Con_Leakage*(v-Vot_Leakage) - Con_sodium*m*m*m*h*(v-Vot_sodium) - Con_potassium*n*n*n*n*(v-Vot_potassium)
-                - gE*(v-Vot_Excitatory) - gI*(v-Vot_Inhibitory);
+  neu_i_dy[0] = - Con_Leakage*(v-Vot_Leakage)
+                - Con_sodium*m*m*m*h*(v-Vot_sodium)
+                - Con_potassium*n*n*n*n*(v-Vot_potassium)
+                - (gE+gE_P)*(v-Vot_Excitatory)
+                - gI*(v-Vot_Inhibitory);
 
 //mhn_dt
   {
@@ -199,6 +208,9 @@ void whole_dt_single(const double * const &neu_i_val, double *&neu_i_dy, double 
   }
   neu_i_dy[  Stepsmooth_Con] = -neu_i_val[  Stepsmooth_Con]*(1.0/Time_ExConR);
   neu_i_dy[2*Stepsmooth_Con] = -neu_i_val[2*Stepsmooth_Con]*(1.0/Time_InConR);
+  // Poisson excitatory conductance chain
+  neu_i_dy[2*Stepsmooth_Con+4] = -neu_i_val[2*Stepsmooth_Con+4]*(1.0/Time_ExCon_P) + neu_i_val[2*Stepsmooth_Con+5];
+  neu_i_dy[2*Stepsmooth_Con+5] = -neu_i_val[2*Stepsmooth_Con+5]*(1.0/Time_ExConR_P);
 }
 
 void whole_dt_vector(const neuron * const neu_val, neuron *neu_dy, double *volt, double t)
@@ -264,20 +276,22 @@ void get_dx_net(Eigen::ArrayXXd &dx, const Eigen::ArrayXXd &xm)
 
 void get_dx(Eigen::ArrayXXd &dx, const Eigen::ArrayXXd &xm, double t)
 {
-  const Eigen::ArrayXd &v  = xm.col(0);
-  const Eigen::ArrayXd &gE = xm.col(1);
-  const Eigen::ArrayXd &hE = xm.col(2);
-  const Eigen::ArrayXd &gI = xm.col(3);
-  const Eigen::ArrayXd &hI = xm.col(4);
-  const Eigen::ArrayXd &m  = xm.col(5);
-  const Eigen::ArrayXd &h  = xm.col(6);
-  const Eigen::ArrayXd &n  = xm.col(7);
+  const Eigen::ArrayXd &v    = xm.col(0);
+  const Eigen::ArrayXd &gE   = xm.col(1);
+  const Eigen::ArrayXd &hE   = xm.col(2);
+  const Eigen::ArrayXd &gI   = xm.col(3);
+  const Eigen::ArrayXd &hI   = xm.col(4);
+  const Eigen::ArrayXd &m    = xm.col(5);
+  const Eigen::ArrayXd &h    = xm.col(6);
+  const Eigen::ArrayXd &n    = xm.col(7);
+  const Eigen::ArrayXd &gE_P = xm.col(8);
+  const Eigen::ArrayXd &hE_P = xm.col(9);
 
   // cost 13.3% (1000neuron), 16.4% (100neuron)
   dx.col(0) = -Con_Leakage * (v - Vot_Leakage)
               -Con_sodium * m*m*m*h * (v-Vot_sodium)
               -Con_potassium * n*n*n*n * (v-Vot_potassium)
-              -gE * (v-Vot_Excitatory) - gI * (v-Vot_Inhibitory);
+              -(gE + gE_P) * (v-Vot_Excitatory) - gI * (v-Vot_Inhibitory);
 
   // cost 55.6% (1000neuron), 59.8% (100neuron) - 52.0% (1000neuron), % (100neuron)
   // mhn
@@ -303,6 +317,9 @@ void get_dx(Eigen::ArrayXXd &dx, const Eigen::ArrayXXd &xm, double t)
   dx.col(2) = -hE * (1.0/Time_ExConR);
   dx.col(3) = -gI * (1.0/Time_InCon) + hI;
   dx.col(4) = -hI * (1.0/Time_InConR);
+  // Poisson excitatory conductance chain
+  dx.col(8) = -gE_P * (1.0/Time_ExCon_P) + hE_P;
+  dx.col(9) = -hE_P * (1.0/Time_ExConR_P);
 
   // cost 12% (1000neuron), 2.4% (100neuron)
   // Compute influence from the network (H^E and H^I)
@@ -525,7 +542,7 @@ void runge_kutta2(neuron *tempneu, double subTstep, double t_evolution)
   int j = -1;
   //initialize the information of the network
   for (i = 0; i<g_num_neu; i++) {
-    for (j = 0; j<2*Stepsmooth_Con+4; j++) {
+    for (j = 0; j<size_neuronvar; j++) {
       neuRK[i].value[j]  = tempneu[i].value[j];
     }
     vol[i]=(neuRK[i].value[0]>4?(exp((tempneu[i].value[0]-8.5)*5)/(1+exp((tempneu[i].value[0]-8.5)*5))):0);
@@ -536,7 +553,7 @@ void runge_kutta2(neuron *tempneu, double subTstep, double t_evolution)
   for (i = 0; i<g_num_neu; i++) {
     whole_dt(neuRK, neu_d1, vol, i, ini_time);
     //update the information of the network at midtime, which will be used in the following RK2 method
-    for (j = 0; j<2*Stepsmooth_Con+4; j++)
+    for (j = 0; j<size_neuronvar; j++)
       neuRK[i].value[j]  = tempneu[i].value[j]  + neu_d1[i].value[j]  * subTstep/2;
   }
   for (i = 0; i<g_num_neu; i++)
@@ -551,7 +568,7 @@ void runge_kutta2(neuron *tempneu, double subTstep, double t_evolution)
 //update the final data
 //dy = dy2
   for (i = 0; i<g_num_neu; i++) {
-    for (j=0; j<2*Stepsmooth_Con+4; j++) {
+    for (j=0; j<size_neuronvar; j++) {
       tempneu[i].value[j] = tempneu[i].value[j] + neu_d2[i].value[j] *subTstep;
     }
   }
@@ -570,7 +587,7 @@ void runge_kutta3(neuron *tempneu, double subTstep, double t_evolution)
   int j = -1;
   //initialize the information of the network
   for (i = 0; i<g_num_neu; i++) {
-    for (j = 0; j<2*Stepsmooth_Con+4; j++) {
+    for (j = 0; j<size_neuronvar; j++) {
       neuRK[i].value[j]  = tempneu[i].value[j];
     }
     vol[i]=(neuRK[i].value[0]>4?(exp((tempneu[i].value[0]-8.5)*5)/(1+exp((tempneu[i].value[0]-8.5)*5))):0);
@@ -580,7 +597,7 @@ void runge_kutta3(neuron *tempneu, double subTstep, double t_evolution)
   for (i = 0; i<g_num_neu; i++) {
     whole_dt(neuRK, neu_d1, vol, i, ini_time);
     //update the information of the network at midtime, which will be used in the following RK2 method
-    for (j = 0; j<2*Stepsmooth_Con+4; j++)
+    for (j = 0; j<size_neuronvar; j++)
       neuRK[i].value[j]  = tempneu[i].value[j]  + neu_d1[i].value[j]  * subTstep/3;
   }
   for (i = 0; i<g_num_neu; i++)
@@ -591,7 +608,7 @@ void runge_kutta3(neuron *tempneu, double subTstep, double t_evolution)
   for (i = 0; i<g_num_neu; i++) {
     whole_dt(neuRK, neu_d2, vol, i, one_third_time);
     //update the information of the network at midtime, which will be used in the following RK4 method
-    for (j = 0; j<2*Stepsmooth_Con+4; j++)
+    for (j = 0; j<size_neuronvar; j++)
       neuRK[i].value[j]  = tempneu[i].value[j]  + neu_d2[i].value[j]  * subTstep*2/3;
   }
   for (i = 0; i<g_num_neu; i++){
@@ -607,7 +624,7 @@ void runge_kutta3(neuron *tempneu, double subTstep, double t_evolution)
 //update the final data
 //dy = (dy1+3*dy3)/4
   for (i = 0; i<g_num_neu; i++) {
-    for (j=0; j<2*Stepsmooth_Con+4; j++) {
+    for (j=0; j<size_neuronvar; j++) {
       tempneu[i].value[j] = tempneu[i].value[j] + (neu_d1[i].value[j] + 3*neu_d3[i].value[j]) *subTstep/4;
     }
   }
@@ -620,7 +637,7 @@ void runge_kutta4(neuron *tempneu, double subTstep, double t_evolution)
 
   // dy1 = f(t(n), y(n)), here y,f,dy1 are 2*stepsmooth+4-dimension vectors
   for (i = 0; i<g_num_neu; i++) {
-    for (j = 0; j<2*Stepsmooth_Con+4; j++) {
+    for (j = 0; j<size_neuronvar; j++) {
       neuRK[i].value[j]  = tempneu[i].value[j];
     }
   }
@@ -628,7 +645,7 @@ void runge_kutta4(neuron *tempneu, double subTstep, double t_evolution)
 
   // dy2 = f(t(n)+h/2, y(n)+dy1*h/2)
   for (i = 0; i<g_num_neu; i++) {
-    for (j = 0; j<2*Stepsmooth_Con+4; j++) {
+    for (j = 0; j<size_neuronvar; j++) {
       neuRK[i].value[j]  = tempneu[i].value[j] + neu_d1[i].value[j] * (subTstep/2);
     }
   }
@@ -636,7 +653,7 @@ void runge_kutta4(neuron *tempneu, double subTstep, double t_evolution)
 
   // dy3 = f(t(n)+h/2, y(n)+dy2*h/2)
   for (i = 0; i<g_num_neu; i++){
-    for (j = 0; j<2*Stepsmooth_Con+4; j++) {
+    for (j = 0; j<size_neuronvar; j++) {
       neuRK[i].value[j]  = tempneu[i].value[j] + neu_d2[i].value[j] * (subTstep/2);
     }
   }
@@ -644,7 +661,7 @@ void runge_kutta4(neuron *tempneu, double subTstep, double t_evolution)
 
   // dy4 = f(t(n)+h, y(n)+dy3*h)
   for (i = 0; i<g_num_neu; i++) {
-    for (j = 0; j<2*Stepsmooth_Con+4; j++) {
+    for (j = 0; j<size_neuronvar; j++) {
       neuRK[i].value[j]  = tempneu[i].value[j] + neu_d3[i].value[j] * subTstep;
     }
   }
@@ -653,7 +670,7 @@ void runge_kutta4(neuron *tempneu, double subTstep, double t_evolution)
   // update the final data
   // dy = (dy1+2*dy2+2*dy3+dy4)/6
   for (i = 0; i<g_num_neu; i++) {
-    for (j=0; j<2*Stepsmooth_Con+4; j++) {
+    for (j=0; j<size_neuronvar; j++) {
       tempneu[i].value[j] = tempneu[i].value[j] + (neu_d1[i].value[j] + 2*neu_d2[i].value[j] + 2*neu_d3[i].value[j] + neu_d4[i].value[j]) *subTstep/6;
     }
   }
@@ -663,16 +680,16 @@ void runge_kutta4_vec(neuron *tempneu, double subTstep, double t_evolution)
 {
   int i, j;
   static Eigen::ArrayXXd xt, k1, k2, k3, k4;  // all variables of all neurons each
-  if (xt.rows() != g_num_neu || xt.cols() != 2*Stepsmooth_Con+4) {
-    xt.resize(g_num_neu, 2*Stepsmooth_Con+4);
-    k1.resize(g_num_neu, 2*Stepsmooth_Con+4);
-    k2.resize(g_num_neu, 2*Stepsmooth_Con+4);
-    k3.resize(g_num_neu, 2*Stepsmooth_Con+4);
-    k4.resize(g_num_neu, 2*Stepsmooth_Con+4);
+  if (xt.rows() != g_num_neu || xt.cols() != size_neuronvar) {
+    xt.resize(g_num_neu, size_neuronvar);
+    k1.resize(g_num_neu, size_neuronvar);
+    k2.resize(g_num_neu, size_neuronvar);
+    k3.resize(g_num_neu, size_neuronvar);
+    k4.resize(g_num_neu, size_neuronvar);
   }
 
   for (i = 0; i<g_num_neu; i++) {
-    for (j = 0; j<2*Stepsmooth_Con+4; j++) {
+    for (j = 0; j<size_neuronvar; j++) {
       xt(i,j) = tempneu[i].value[j];
     }
   }
@@ -688,7 +705,7 @@ void runge_kutta4_vec(neuron *tempneu, double subTstep, double t_evolution)
   xt += (k1 + 2*k2 + 2*k3 + k4) * (subTstep/6);
 
   for (i = 0; i<g_num_neu; i++) {
-    for (j = 0; j<2*Stepsmooth_Con+4; j++) {
+    for (j = 0; j<size_neuronvar; j++) {
       tempneu[i].value[j] = xt(i,j);
     }
   }
@@ -772,7 +789,7 @@ void spiking_time(neuron *bef_neu, neuron *cur_neu, int index_neuron, double t_e
 
   double va  = bef_neu[index_neuron].value[0];
   double dva = 0; // initialization
-  double gEa = bef_neu[index_neuron].value[1];
+  double gEa  = bef_neu[index_neuron].value[1] + bef_neu[index_neuron].value[2*Stepsmooth_Con+4];
   double gIa = bef_neu[index_neuron].value[Stepsmooth_Con+1];
   double ma  = bef_neu[index_neuron].value[2*Stepsmooth_Con+1];
   double ha  = bef_neu[index_neuron].value[2*Stepsmooth_Con+2];
@@ -783,7 +800,7 @@ void spiking_time(neuron *bef_neu, neuron *cur_neu, int index_neuron, double t_e
 
   double vb  = cur_neu[index_neuron].value[0];
   double dvb = 0; // initialization
-  double gEb = cur_neu[index_neuron].value[1];
+  double gEb = cur_neu[index_neuron].value[1] + cur_neu[index_neuron].value[2*Stepsmooth_Con+4];
   double gIb = cur_neu[index_neuron].value[Stepsmooth_Con+1];
   double mb  = cur_neu[index_neuron].value[2*Stepsmooth_Con+1];
   double hb  = cur_neu[index_neuron].value[2*Stepsmooth_Con+2];
@@ -971,7 +988,7 @@ void compute_perstep()
   int imax, neuron_index = 0, var_index = 0;
   if (g_no_graphic) {
     if (g_cond_out)
-      imax = g_num_neu*(2*Stepsmooth_Con+4);
+      imax = g_num_neu*size_neuronvar;
     else
       imax = g_num_neu;
   } else {
@@ -1052,6 +1069,14 @@ void compute_perstep()
       g_num_neu*[11,12) m   ion channel conductance
       g_num_neu*[12,13) h   ion channel conductance
       g_num_neu*[13,14) n   ion channel conductance
+    after adding separate Poisson excitatory conductance (gE_P,hE_P):
+      indices (per neuron) 2*Stepsmooth_Con+4 -> gE_P, 2*Stepsmooth_Con+5 -> hE_P
+      for Stepsmooth_Com = 4, extra GLOBAL_STRA blocks:
+        g_num_neu*[14,15) gE_P  Poisson excitatory conductance
+        g_num_neu*[15,16) hE_P  Poisson excitatory reservoir (rising component)
+      total size: size_neuronvar = 2*Stepsmooth_Con + 6
+      membrane equation uses GE_total = GE + gE_P
+      Poisson events increment hE_P (not the recurrent synaptic chain)
   **/
 
   if (g_b_save_while_cal) {

@@ -128,6 +128,9 @@ static inline int myisnan(double x) { return x != x; }
 #define Time_InCon      0.5
 // decay time scale of high-order In_conductance
 #define Time_InConR     7.0
+// Separate Poisson excitatory conductance uses its own time constants (aliases reuse existing)
+#define Time_ExCon_P  Time_ExCon
+#define Time_ExConR_P Time_ExConR
 
 #define xleft   -5
 #define gleft  0.0066928509242
@@ -176,7 +179,7 @@ static inline int myisnan(double x) { return x != x; }
 // the length of "data" stored in the neuron structure
 ///jyl: sequence: neu[0]:voltage neu[1]~neu[Stepsmooth]:excitatory conductance(s) neu[Stepsmooth+1]~neu[2*Stepsmooth]:inhibitory conductance(s)
 ///neu[2*Stepsmooth+1]~neu[2*Stepsmooth+3]:mhn
-#define size_neuronvar  (2*Stepsmooth_Con+4)
+#define size_neuronvar  (2*Stepsmooth_Con+6)  // +2 for gE_P (2*Stepsmooth_Con+4) and hE_P (2*Stepsmooth_Con+5)
 
 ////////////////////////////////////////////////////////////
 // simulator behaviour variables
